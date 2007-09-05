@@ -3,22 +3,23 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Network or Graph Plotting }
 \description{
-Given the communities identified by \code{icommunity}, the plotting algorithm places the communities with decreasing community sizes along a spiral, in an effort to show the hierarchical structure of the network. The vertices belonging to a community are arranged on a circle at the designated position on the spiral. The radii of the circles are proportional to the community sizes.
+Given the communities identified by \code{icommunity}, the plotting algorithm places the communities with decreasing community sizes along a spiral, in an effort to show the modular structure of the network. The vertices belonging to a community are arranged on a circle at the designated position on the spiral. The radii of the circles are proportional to the community sizes.
 }
 \usage{
 inetplot(clusters, theta = 30, shaft = 1, circle = TRUE, singlets = FALSE, 
-         labels = TRUE, edges = TRUE, points = TRUE)
+         labels = TRUE, edges = TRUE, points = TRUE, shadow = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{clusters}{ An object returned from the network partitioning function \code{\link{icommunity}} }
-  \item{theta}{ Angle in degree between neighboring communities on the spiral }
-  \item{shaft}{ A scaling factor for the arm of the spiral }
-  \item{circle}{ A logical to indicate whether to position the vertices in a community on a circle (default) or spiral }
-  \item{singlets}{ A logical to turn off (default) displaying isolated vertices }
-  \item{labels}{ A logical to show vertex labels (default) or not }
-  \item{edges}{ A logical to draw an edge between connected vertices (by default) or not }
-  \item{points}{ A logical to draw dots on vertices (by default) or not }
+  \item{clusters}{ an object returned from the network partitioning function \code{\link{icommunity}} }
+  \item{theta}{ angle in degree between neighboring communities on the spiral }
+  \item{shaft}{ a scaling factor for the radius of the spiral }
+  \item{circle}{ a logical to indicate whether to position the vertices in a community on a circle (default) or a spiral }
+  \item{singlets}{ a logical to turn off (default) displaying isolated vertices }
+  \item{labels}{ a logical to show vertex labels (default) or not }
+  \item{edges}{ a logical to draw an edge between connected vertices (by default) or not }
+  \item{points}{ a logical to draw dots on vertices (by default) or not }
+  \item{shadow}{ a logical to color the between-community edges in gray (default) or black. Within-community edges are in black. }
 }
 \details{
 The Cartesian coordinates of community \eqn{i}{i} on the spiral are given by
@@ -42,7 +43,7 @@ where \eqn{i}{i} is the \eqn{i}{i}th largest community in the network. The pitch
 \seealso{ \code{\link{icommunity}}, \code{\link{ihierarchy}} }
 \examples{
 ## load example networks
-data(cashflow)
+data(icashflow)
 
 ## identify the communities within the network
 partite7 <- icommunity(cf7,labelcf7,partite=TRUE)

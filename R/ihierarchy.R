@@ -1,8 +1,8 @@
 `ihierarchy` <-
 function(clusters,fan=FALSE,spread=1) {
- if (clusters$Q == 0) return("the network is indivisible")
+ if (sum(clusters$Q) == 0) return("the network is indivisible")
  op <- par()$mar
- par(mar=c(1.1,1.1,1.1,1.1))
+ par(mar=c(1.1,2.1,1.1,2.1))
 
  if (fan) {
     if (spread < 0.01) spread <- 0.01
@@ -57,11 +57,12 @@ clusters$arrows[(i-1)*12+4],length=0)
 clusters$arrows[(i-1)*12+12],length=0)
      }
  }
- nodec <- numeric()
+ nodec <- numeric() 
  for (i in 1:length(clusters$sizes)) nodec <- c(nodec,rep(i,clusters$sizes[i]))
+ cols <- order(clusters$sizes,decreasing=TRUE)
  for (i in 1:length(clusters$sizes)) {
      o <- order(clusters$ringleaders[nodec == i],decreasing=TRUE)
-     text(x[nodec==i],y[nodec==i],labels=(clusters$indivisibles[nodec==i])[o],col=i,xpd=TRUE)
+     text(x[nodec==i],y[nodec==i],labels=(clusters$indivisibles[nodec==i])[o],col=(which(cols==i)+1),xpd=TRUE)
  }
  par(mar=op)
 }

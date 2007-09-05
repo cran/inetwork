@@ -1,5 +1,11 @@
-`transitivity` <-
+`itransitivity` <-
 function(A) {
+ if (!is.matrix(A)) return("error: input is not a matrix")
+ if (dim(A)[1] != dim(A)[2]) return("error: matrix is not square")
+ if (dim(A)[1] < 3) return("network is trivial")
+ if (any(A>1)) return("error: not an unweighted adjacency matrix")
+ if (any(A<0)) return("error: not an unweighted adjacency matrix")
+
  k <- numeric()
  for (i in 1:dim(A)[1]) k[i] <- sum(A[i,])
 
@@ -8,7 +14,7 @@ function(A) {
      c[i] <- 0
      for (j in 1:dim(A)[1]) {
          for (h in 1:dim(A)[1]) {
-             if (h != j && A[i,j] != 0 && A[i,h] != 0 && A[j,h] != 0) {
+             if (i != j && i != h && j != h && A[i,j] != 0 && A[i,h] != 0 && A[j,h] != 0) {
                 c[i] <- c[i] + 1 #A[i,j]*A[i,h]*A[j,h]
              }
          }

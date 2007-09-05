@@ -1,5 +1,5 @@
-\name{cashflow}
-\alias{cashflow}
+\name{icashflow}
+\alias{icashflow}
 \alias{cf3}
 \alias{cf5}
 \alias{cf7}
@@ -13,7 +13,7 @@
 \description{
 Example adjacency matrices for community identification and visualization demonstration
 }
-\usage{data(cashflow)}
+\usage{data(icashflow)}
 \format{ adjacency matrices \code{cf3}, \code{cf5}, \code{cf7}, \code{cf9} and vertex labels \code{labelcf3}, \code{labelcf5}, \code{labelcf7}, \code{labelcf9}: 
 \tabular{rl}{
 \code{cf3}\tab a cashflow network between 11 traders in an experiment on day 2\cr
@@ -36,6 +36,6 @@ Example adjacency matrices for community identification and visualization demons
 %  ~~ possibly secondary sources and usages ~~
 %}
 \examples{
-data(cashflow)
+data(icashflow)
 }
 \keyword{datasets}

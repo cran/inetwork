@@ -16,7 +16,7 @@ Version: \tab 1.0\cr
 Date: \tab 2007-06-22\cr
 License: \tab LGPL\cr
 }
-Identification of communities (or modules) in an undirected network (or graph) by \code{\link{icommunity}}, followed by organizing the communities within communities by \code{\link{ihierarchy}} and plotting of the network by \code{\link{inetplot}}. \code{\link{assortativity}} and \code{\link{transitivity}} in the package calculate a vertex's degree-correlation and clustering coefficient.
+Identification of communities (or modules) in an undirected network (or graph) by \code{\link{icommunity}}, followed by organizing the communities within communities by \code{\link{ihierarchy}} and plotting of the network by \code{\link{inetplot}}. \code{\link{iassortativity}} and \code{\link{itransitivity}} in the package calculate a vertex's degree-correlation and clustering coefficient.
 }
 \author{
 Sun-Chong Wang\cr 
@@ -32,11 +32,11 @@ Modularity and community structure in networks,
 \keyword{graphs}
 \keyword{misc}
 \seealso{
-\code{\link{icommunity}}, \code{\link{ihierarchy}}, \code{\link{inetplot}}, \code{\link{assortativity}}, \code{\link{transitivity}}
+\code{\link{icommunity}}, \code{\link{ihierarchy}}, \code{\link{inetplot}}, \code{\link{iassortativity}}, \code{\link{itransitivity}}
 }
 \examples{
 ## load data
-data(cashflow)
+data(icashflow)
 
 ## network partitioning to find communities
 ihierarchy(icommunity(cf5))

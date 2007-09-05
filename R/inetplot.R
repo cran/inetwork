@@ -1,9 +1,10 @@
 `inetplot` <-
-function(clusters,theta=30,shaft=1,circle=TRUE,singlets=FALSE,labels=TRUE,edges=TRUE,points=TRUE) {
+function(clusters,theta=30,shaft=1,circle=TRUE,singlets=FALSE,labels=TRUE,edges=TRUE,points=TRUE,shadow=TRUE) {
  x <- numeric()
  y <- numeric()
  c <- numeric()
  s <- numeric()
+ module <- c(rep(0,length(clusters$singlets)),rep(1:length(clusters$sizes),clusters$sizes))   
  di <- order(clusters$sizes,decreasing=TRUE)
  #theta <- 2*pi/length(di)
  theta <- theta*2*pi/360
@@ -13,7 +14,7 @@ function(clusters,theta=30,shaft=1,circle=TRUE,singlets=FALSE,labels=TRUE,edges=
      #shrink <- 1
      centerx <- (i-1)*shaft*shrink*cos((i-1)*theta)
      centery <- (i-1)*shaft*shrink*sin((i-1)*theta)
-     #symbols(centerx,centery,circles=shrink,add=T,inches=F)
+     #symbols(centerx,centery,circles=shrink,add=TRUE,inches=FALSE)
      tmp1 <- 0
      if (di[i] > 1) tmp1 <- sum(clusters$sizes[1:di[i]-1])
      sizes <- clusters$ringleaders[tmp1 + (1:clusters$sizes[di[i]])]
@@ -64,6 +65,32 @@ function(clusters,theta=30,shaft=1,circle=TRUE,singlets=FALSE,labels=TRUE,edges=
  #    #points(centerx,centery,pch=21)
  #}
  plot(x,y,pch=" ",axes=FALSE,ann=FALSE)
+ if (edges) {
+    for (i in 1:dim(clusters$A)[1]) {
+        for (j in i:dim(clusters$A)[1]) {
+            if (clusters$A[i,j] == 1) {
+               if (module[which(clusters$indices == i)]*module[which(clusters$indices == j)] != 0) {
+                  if (module[which(clusters$indices == i)] != module[which(clusters$indices == j)]) { 
+                     if (shadow) arrows(x[i],y[i],x[j],y[j],length=0,col="gray")                     else arrows(x[i],y[i],x[j],y[j],length=0)
+                  }
+               }
+            }
+        }
+    }
+ }
+ if (edges) {
+    for (i in 1:dim(clusters$A)[1]) {
+        for (j in i:dim(clusters$A)[1]) {
+            if (clusters$A[i,j] == 1) {
+               if (module[which(clusters$indices == i)]*module[which(clusters$indices == j)] != 0) {
+                  if (module[which(clusters$indices == i)] == module[which(clusters$indices == j)])  
+                     arrows(x[i],y[i],x[j],y[j],length=0)
+               }
+            }
+        }
+    }
+ }
+
  #symbols(centerx,centery,circles=shrink,add=T,inches=F)
  for (i in 1:dim(clusters$A)[1]) {
      if (labels) {
@@ -73,15 +100,5 @@ function(clusters,theta=30,shaft=1,circle=TRUE,singlets=FALSE,labels=TRUE,edges=
         points(x[clusters$indices[i]],y[clusters$indices[i]],pch=19,col=c[clusters$indices[i]],cex=s[clusters$indices[i]])
      }
  }
- if (edges) {
-    for (i in 1:dim(clusters$A)[1]) {
-        for (j in i:dim(clusters$A)[1]) {
-            if (clusters$A[i,j] == 1) {
-               arrows(x[i],y[i],x[j],y[j],length=0)
-            }
-        }
-    }
- }
  par(mar=op)
 }
-
