@@ -43,4 +43,9 @@ ihierarchy(icommunity(cf5))
 
 ## network plotting showing the communities
 inetplot(icommunity(cf5,partite=TRUE))
+
+## a larger network
+mycommunity <- icommunity(A4)
+ihierarchy(mycommunity)
+inetplot(mycommunity)
 }

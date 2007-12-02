@@ -5,13 +5,15 @@ function(A,nodes=NULL,partite=FALSE) {
  if (dim(A)[1] < 3) return("network is trivial")
  if (any(A>1)) return("error: not an unweighted adjacency matrix")
  if (any(A<0)) return("error: not an unweighted adjacency matrix")
-
- degree <- numeric()
- degre1 <- numeric()
- for (i in 1:dim(A)[1]) {
-     degree[i] <- sum(A[i,])
-     degre1[i] <- sum(A[,i])
- }
+ diag(A) <- 0
+ ##degree <- numeric()
+ ##degre1 <- numeric()
+ ##for (i in 1:dim(A)[1]) {
+ ##    degree[i] <- sum(A[i,])
+ ##    degre1[i] <- sum(A[,i])
+ ##}
+ degree <- rowSums(A)
+ degre1 <- colSums(A)
  degre1 <- degree-degre1
  if (any(degre1 != 0)) return("error: matrix is not symmetric")
  
@@ -22,14 +24,17 @@ function(A,nodes=NULL,partite=FALSE) {
  arrows <- numeric()
  xcoordinates <- numeric()
  ycoordinates <- numeric()
- if (!is.data.frame(nodes) & is.null(nodes)) nodes <- as.character(1:dim(A)[1])
+ if (is.character(rownames(A)) & length(rownames(A))==dim(A)[1]) nodes <- rownames(A)
+ else if (is.character(colnames(A)) & length(colnames(A))==dim(A)[1]) nodes <- colnames(A)
+ else if (!is.data.frame(nodes) & is.null(nodes)) nodes <- as.character(1:dim(A)[1])
 
- B <- matrix(nrow=dim(A)[1],ncol=dim(A)[1],data=0)
- for (i in 1:dim(A)[1]) {
-     for (j in 1:dim(A)[1]) {
-         B[i,j] = A[i,j]-degree[i]*degree[j]/sum(degree)
-     }
- }
+ ##B <- matrix(nrow=dim(A)[1],ncol=dim(A)[1],data=0)
+ ##for (i in 1:dim(A)[1]) {
+ ##    for (j in 1:dim(A)[1]) {
+ ##        B[i,j] = A[i,j]-degree[i]*degree[j]/sum(degree)
+ ##    }
+ ##}
+ B <- A - outer(degree,degree)/sum(degree)
  if (partite) B <- -B
  eigenB <- eigen(B, symmetric=TRUE)
  iz <- which(degree==0)
@@ -42,8 +47,11 @@ function(A,nodes=NULL,partite=FALSE) {
      clusters$indivisibles <- c(clusters$indivisibles,nodes)
      clusters$ringleaders <- c(clusters$ringleaders,abs(eigenvector1))
      clusters$indices <- c(clusters$indices,indices)
-     for (i in 1:dim(B)[1]) clusters$xcoordinates <- c(clusters$xcoordinates,origin[1])
-     for (i in 1:dim(B)[1]) clusters$ycoordinates <- c(clusters$ycoordinates,origin[2]-i)
+     ##for (i in 1:dim(B)[1]) clusters$xcoordinates <- c(clusters$xcoordinates,origin[1])
+     ##for (i in 1:dim(B)[1]) clusters$ycoordinates <- c(clusters$ycoordinates,origin[2]-i)
+     clusters$xcoordinates <- c(clusters$xcoordinates,rep(origin[1],dim(B)[1]))
+     i <- c(1:dim(B)[1])
+     clusters$ycoordinates <- c(clusters$ycoordinates,origin[2]-i)     
      return(clusters)
   }
   ip <- which(eigenB$vectors[,1] > 0)
@@ -74,8 +82,11 @@ function(A,nodes=NULL,partite=FALSE) {
      clusters$indivisibles <- c(clusters$indivisibles,nodes[iz])
      clusters$ringleaders <- c(clusters$ringleaders,eigenB$vectors[iz,1])
      clusters$indices <- c(clusters$indices,indices[iz])
-     for (i in 1:length(iz)) clusters$xcoordinates <- c(clusters$xcoordinates,arrows[3]+i-1)
-     for (i in 1:length(iz)) clusters$ycoordinates <- c(clusters$ycoordinates,arrows[4])
+     ##for (i in 1:length(iz)) clusters$xcoordinates <- c(clusters$xcoordinates,arrows[3]+i-1)
+     ##for (i in 1:length(iz)) clusters$ycoordinates <- c(clusters$ycoordinates,arrows[4])
+     i <- c(1:length(iz))
+     clusters$xcoordinates <- c(clusters$xcoordinates,(arrows[3]+i-1))
+     clusters$ycoordinates <- c(clusters$ycoordinates,rep(arrows[4],length(iz)))
   }
 
   if ((bp+bm) == 0) return(clusters)
@@ -85,8 +96,11 @@ function(A,nodes=NULL,partite=FALSE) {
      clusters$indivisibles <- c(clusters$indivisibles,nodes[c(ip,im)])
      clusters$ringleaders <- c(clusters$ringleaders,abs(eigenB$vectors[c(ip,im),1]))
      clusters$indices <- c(clusters$indices,indices[ip],indices[im])
-     for (i in 1:(bp+bm)) clusters$xcoordinates <- c(clusters$xcoordinates,origin[1])
-     for (i in 1:(bp+bm)) clusters$ycoordinates <- c(clusters$ycoordinates,origin[2]-i)
+     ##for (i in 1:(bp+bm)) clusters$xcoordinates <- c(clusters$xcoordinates,origin[1])
+     ##for (i in 1:(bp+bm)) clusters$ycoordinates <- c(clusters$ycoordinates,origin[2]-i)
+     clusters$xcoordinates <- c(clusters$xcoordinates,rep(origin[1],bp+bm))
+     i <- c(1:(bp+bm))
+     clusters$ycoordinates <- c(clusters$ycoordinates,origin[2]-i)
      return(clusters) 
   }
 
@@ -112,7 +126,8 @@ function(A,nodes=NULL,partite=FALSE) {
      #    }
      #}
      Bp <- B[ip,ip]
-     for (i in 1:bp) Bp[i,i] <- Bp[i,i]-sum(Bp[i,])
+     ##for (i in 1:bp) Bp[i,i] <- Bp[i,i]-sum(Bp[i,])
+     diag(Bp) <- diag(Bp) - rowSums(Bp)
      #eigenBp <- eigen(Bp, symmetric=TRUE)     
      if (bp >= bm) clusters <- newman(eigenB$vectors[ip,1],Bp,nodes[ip],indices[ip],clusters,arrows[7:8])
      else clusters <- newman(eigenB$vectors[ip,1],Bp,nodes[ip],indices[ip],clusters,arrows[11:12])
@@ -137,7 +152,8 @@ function(A,nodes=NULL,partite=FALSE) {
   #    }
   #}
   Bm <- B[im,im]
-  for (i in 1:bm)  Bm[i,i] <- Bm[i,i]-sum(Bm[i,])
+  ##for (i in 1:bm)  Bm[i,i] <- Bm[i,i]-sum(Bm[i,])
+  diag(Bm) <- diag(Bm) - rowSums(Bm)
   #eigenBm <- eigen(Bm, symmetric=TRUE)
   #print(eigenBm$vectors[,1])
   if (bp >= bm) clusters <- newman(eigenB$vectors[im,1],Bm,nodes[im],indices[im],clusters,arrows[11:12])
@@ -157,5 +173,4 @@ function(A,nodes=NULL,partite=FALSE) {
  #if (partite) clusters$Q <- -clusters$Q
  clusters <- c(list(A=A),clusters)
  return(clusters)
-} # end of mycluster
-
+} # end of icommunity
